@@ -1,106 +1,88 @@
-Absolutely! Here's a comprehensive README file that combines the code, Docker setup, and clear instructions for beginners:
+# Streamlit Daily To-Do List App
 
-**Daily To-Do List App with Streamlit & Docker**
+This project is a daily to-do list app built with Python and Streamlit. The app allows users to add tasks, mark them as complete, and automatically resets the to-do list every 24 hours. It also displays the current date and day of the week at the top-right corner of the app.
 
-This project creates a simple web-based to-do list app that resets daily. It uses Streamlit for the interface and Docker for easy deployment.
+## Features
 
-**Features**
+- Add new tasks to the to-do list.
+- Mark tasks as complete with a checkbox.
+- Strikethrough tasks when marked as complete.
+- Automatically reset the to-do list every 24 hours.
+- Display the current date and day of the week at the top-right corner.
 
-*   Add tasks
-*   Mark tasks as done
-*   Automatically resets the list at midnight every day
-*   Displays the current date and day of the week
+## Installation
 
-**Prerequisites**
+1. Clone the repository:
 
-*   Docker installed on your system (for deployment)
-*   Basic understanding of Python and command line
+    ```sh
+    git clone https://github.com/RamdasCoundinya0716/to-do-app.git
+    cd streamlit-todo-list
+    ```
 
-**Project Files**
+2. Create and activate a virtual environment (optional but recommended):
 
-*   `todo_app.py`: Contains the main Python code for the app
-*   `Dockerfile`: Instructions for building a Docker image to run the app
+    ```sh
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
-**Step-by-Step Instructions**
+3. Install the required packages:
 
-1.  **Set Up Your Environment:**
+    ```sh
+    pip install streamlit
+    ```
 
-    *   Make sure you have Docker installed. You can download it from [https://www.docker.com/get-started](https://www.docker.com/get-started).
+## Usage
 
-2.  **Get the Project Code:**
+1. Run the Streamlit app:
 
-    *   Clone this repository to your computer:
-        ```bash
-        git clone https://your-repository-url.git
-        cd your-repository-name
-        ```
+    ```sh
+    streamlit run todo_app.py
+    ```
 
-3.  **Build the Docker Image:**
+2. Open your web browser and go to `http://localhost:8501` to view the app.
 
-    *   Open a terminal in the project directory (where the `Dockerfile` is located).
-    *   Run the following command:
-        ```bash
-        docker build -t daily-todo-app .
-        ```
-    *   This will take some time as it downloads the necessary components and builds the image.
+3. Use the text input to add new tasks to the list. Click the "Add Task" button to add the task.
 
-4.  **Run the Docker Container:**
+4. Check the box next to a task to mark it as complete. The task will be struck through. Uncheck the box to undo this action.
 
-    *   After the build finishes, start the app:
-        ```bash
-        docker run -p 8501:8501 daily-todo-app
-        ```
+5. The to-do list resets every 24 hours, clearing all tasks.
 
-5.  **Access the App:**
+## Code Overview
 
-    *   Open a web browser and go to `http://localhost:8501`. 
-    *   You should see the To-Do List app!
+- `todo_app.py`: The main Python script containing the Streamlit app.
 
-**Using the App**
+### Key Functions
 
-1.  **Add a Task:** Type your task into the text box and click "Add Task."
-2.  **Mark as Done:** Check the box next to a task to mark it as complete.
-3.  **Automatic Reset:** The to-do list will automatically clear at midnight each day.
+- `reset_todo_list()`: Resets the to-do list every 24 hours.
+- `add_task()`: Adds a new task to the to-do list.
+- `update_task_status(index)`: Toggles the 'done' status of a task.
+- `display_todo_list()`: Displays the tasks with checkboxes.
+- `display_date()`: Displays the current date and day of the week at the top-right corner.
 
-**Code Explanation (`todo_app.py`)**
+### Using Docker
 
-*   **`reset_todo_list()`:** Checks if it's a new day. If so, resets the to-do list.
-*   **`add_task()`:**  Handles adding new tasks.
-*   **`update_task_status()`:**  Changes a task's completion status.
-*   **`display_todo_list()`:** Shows the current tasks.
-*   **`display_date()`:** Displays the date and day.
-*   **`main()`:** The core function that runs the app.
+1. Build the Docker image:
 
-**Understanding the Dockerfile**
+    ```sh
+    docker build -t streamlit-todo-list .
+    ```
 
-```dockerfile
-# Use the official Python image as a base image
-FROM python:3.9-slim
+2. Run the Docker container:
 
-# Set the working directory in the container
-WORKDIR /app
+    ```sh
+    docker run -p 8501:8501 streamlit-todo-list
+    ```
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+3. Open your web browser and go to `http://localhost:8501` to see the app.
 
-# Install the required packages
-RUN pip install --no-cache-dir streamlit
+## Usage
 
-# Expose the port that Streamlit uses
-EXPOSE 8501
+- Enter a task in the input field and click "Add Task" to add it to the list.
+- Check the checkbox next to a task to mark it as complete. The task will be struck through.
+- Uncheck the checkbox to undo the strike-through.
+- The to-do list will automatically reset every 24 hours.
 
-# Command to run the Streamlit app
-CMD ["streamlit", "run", "todo_app.py"]
-```
+## Contributing
 
-*   `FROM`: Specifies the base image. We're using a slim Python version.
-*   `WORKDIR`: Sets the directory where commands will run inside the container.
-*   `COPY`: Copies your code into the container.
-*   `RUN`: Installs the `streamlit` package.
-*   `EXPOSE`: Tells Docker to make port 8501 accessible from outside.
-*   `CMD`: Specifies the command to run when the container starts.
-
-**Troubleshooting**
-
-*   **Port Conflicts:** If you get an error about port 8501 being in use, try a different port (e.g., 8502) and change the `-p` flag in the `docker run` command accordingly.
-*   **Missing Dependencies:** Make sure you have the necessary Python packages installed inside the Docker container. The `RUN pip install...` line in the `Dockerfile` should take care of this.
+Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
