@@ -6,11 +6,15 @@ if 'todo_list' not in st.session_state:
     st.session_state.todo_list = []
 if 'last_reset' not in st.session_state:
     st.session_state.last_reset = datetime.datetime.now().date()
+if 'task_history' not in st.session_state:
+    st.session_state.task_history = {}
 
 # Function to reset the to-do list at midnight
 def reset_todo_list():
     current_date = datetime.datetime.now().date()
     if current_date != st.session_state.last_reset:
+        if st.session_state.todo_list:
+            st.session_state.task_history[st.session_state.last_reset] = st.session_state.todo_list
         st.session_state.todo_list = []
         st.session_state.last_reset = current_date
 
@@ -41,6 +45,15 @@ def display_date():
     current_day = datetime.datetime.now().strftime("%A")
     st.markdown(f"<div style='text-align: right; font-weight: bold;'>{current_date} ({current_day})</div>", unsafe_allow_html=True)
 
+# Function to display task history
+def display_task_history():
+    st.subheader("Task History")
+    for date, tasks in st.session_state.task_history.items():
+        st.markdown(f"**{date.strftime('%d-%m-%Y')}**")
+        for task in tasks:
+            status = "✅" if task['done'] else "❌"
+            st.markdown(f"- {status} {task['task']}")
+
 # Main function
 def main():
     st.title('Daily To-Do List')
@@ -48,6 +61,7 @@ def main():
     reset_todo_list()
     add_task()
     display_todo_list()
+    display_task_history()
 
 if __name__ == "__main__":
     main()
