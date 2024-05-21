@@ -1,19 +1,21 @@
 import streamlit as st
 import datetime
 
-# Function to reset the to-do list every 24 hours
+# Initialize session state
+if 'todo_list' not in st.session_state:
+    st.session_state.todo_list = []
+if 'last_reset' not in st.session_state:
+    st.session_state.last_reset = datetime.datetime.now().date()
+
+# Function to reset the to-do list at midnight
 def reset_todo_list():
     current_date = datetime.datetime.now().date()
-    if 'last_reset' not in st.session_state:
-        st.session_state.last_reset = current_date
     if current_date != st.session_state.last_reset:
         st.session_state.todo_list = []
         st.session_state.last_reset = current_date
 
 # Function to add a new task
 def add_task():
-    if 'todo_list' not in st.session_state:
-        st.session_state.todo_list = []
     task = st.text_input('Enter a task', '')
     if st.button('Add Task'):
         if task:
@@ -37,7 +39,7 @@ def display_todo_list():
 def display_date():
     current_date = datetime.datetime.now().strftime("%d-%m-%Y")
     current_day = datetime.datetime.now().strftime("%A")
-    st.markdown(f"<div style='text-align: right; font-weight: bold;'>Today is {current_date},{current_day}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align: right; font-weight: bold;'>{current_date} ({current_day})</div>", unsafe_allow_html=True)
 
 # Main function
 def main():
