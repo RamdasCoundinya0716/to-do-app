@@ -1,22 +1,32 @@
 import streamlit as st
+import json
+import os
 import datetime
 
-# Initialize session state
-if 'todo_list' not in st.session_state:
-    st.session_state.todo_list = []
-if 'last_reset' not in st.session_state:
-    st.session_state.last_reset = datetime.datetime.now().date()
-if 'task_history' not in st.session_state:
-    st.session_state.task_history = {}
+# File to store tasks
+TASKS_FILE = "tasks.json"
+
+# Function to load tasks from a JSON file
+def load_tasks():
+    if os.path.exists(TASKS_FILE):
+        with open(TASKS_FILE, 'r') as file:
+            return json.load(file)
+    return []
+
+# Function to save tasks to a JSON file
+def save_tasks(tasks):
+    with open(TASKS_FILE, 'w') as file:
+        json.dump(tasks, file)
 
 # Function to reset the to-do list at midnight
 def reset_todo_list():
     current_date = datetime.datetime.now().date()
+    if 'last_reset' not in st.session_state:
+        st.session_state.last_reset = current_date
     if current_date != st.session_state.last_reset:
-        if st.session_state.todo_list:
-            st.session_state.task_history[st.session_state.last_reset] = st.session_state.todo_list
         st.session_state.todo_list = []
         st.session_state.last_reset = current_date
+        save_tasks([])
 
 # Function to add a new task
 def add_task():
@@ -24,11 +34,13 @@ def add_task():
     if st.button('Add Task'):
         if task:
             st.session_state.todo_list.append({'task': task, 'done': False})
+            save_tasks(st.session_state.todo_list)
             st.experimental_rerun()
 
 # Function to update the status of a task
 def update_task_status(index):
     st.session_state.todo_list[index]['done'] = not st.session_state.todo_list[index]['done']
+    save_tasks(st.session_state.todo_list)
 
 # Function to display the to-do list
 def display_todo_list():
@@ -45,15 +57,6 @@ def display_date():
     current_day = datetime.datetime.now().strftime("%A")
     st.markdown(f"<div style='text-align: right; font-weight: bold;'>{current_date} ({current_day})</div>", unsafe_allow_html=True)
 
-# Function to display task history
-def display_task_history():
-    st.subheader("Task History")
-    for date, tasks in st.session_state.task_history.items():
-        st.markdown(f"**{date.strftime('%d-%m-%Y')}**")
-        for task in tasks:
-            status = "✅" if task['done'] else "❌"
-            st.markdown(f"- {status} {task['task']}")
-
 # Main function
 def main():
     st.title('Daily To-Do List')
@@ -61,7 +64,12 @@ def main():
     reset_todo_list()
     add_task()
     display_todo_list()
-    display_task_history()
+
+# Load tasks into session state
+if 'todo_list' not in st.session_state:
+    st.session_state.todo_list = load_tasks()
+if 'last_reset' not in st.session_state:
+    st.session_state.last_reset = datetime.datetime.now().date()
 
 if __name__ == "__main__":
     main()
