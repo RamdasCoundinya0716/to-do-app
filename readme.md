@@ -18,7 +18,7 @@ This project is a daily to-do list app built with Python and Streamlit. The app 
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/your-username/streamlit-todo-list.git
+    git clone https://github.com/RamdasCoundinya0716/to-do-app.git
     cd streamlit-todo-list
     ```
 

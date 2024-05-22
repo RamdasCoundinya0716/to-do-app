@@ -1,17 +1,27 @@
-# Use the official Python image as a base image
-FROM python:3.9-slim
+# Stage 1: Build stage
+FROM python:3.8-slim AS builder
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
-
-# Install the required packages
+# Install Streamlit and other dependencies
 RUN pip install --no-cache-dir streamlit
 
-# Expose the port that Streamlit uses
+# Copy the application source code
+COPY . .
+
+# Stage 2: Run stage
+FROM gcr.io/distroless/python3
+
+# Set the working directory
+WORKDIR /app
+
+# Copy only the necessary files from the build stage
+COPY --from=builder /app /app
+COPY --from=builder /usr/local/lib/python3.8 /usr/local/lib/python3.8
+
+# Expose the port the app runs on
 EXPOSE 8501
 
-# Command to run the Streamlit app
+# Run the application
 CMD ["streamlit", "run", "todo_app.py"]
